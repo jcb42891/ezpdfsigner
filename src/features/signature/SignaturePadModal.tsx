@@ -33,6 +33,7 @@ export const SignaturePadModal = () => {
       minWidth: 0.8,
       maxWidth: 2.5,
       penColor: '#111111',
+      backgroundColor: 'rgba(0,0,0,0)',
     })
 
     resizeCanvas()

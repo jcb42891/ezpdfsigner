@@ -67,8 +67,10 @@ button.primary {
 
 .app-shell {
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  min-height: 100vh;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .app-shell__toolbar {
@@ -101,6 +103,7 @@ button.primary {
   display: grid;
   grid-template-columns: 300px 1fr;
   min-height: 0;
+  overflow: hidden;
 }
 
 .app-shell__sidebar {
@@ -356,6 +359,7 @@ button.primary {
 @media (max-width: 980px) {
   .app-shell__body {
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   .app-shell__sidebar {

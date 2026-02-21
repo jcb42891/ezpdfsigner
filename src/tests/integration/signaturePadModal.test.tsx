@@ -82,6 +82,13 @@ describe('SignaturePadModal', () => {
     const user = userEvent.setup()
     render(<SignaturePadModal />)
 
+    expect(signaturePadMocks.constructorSpy).toHaveBeenCalledWith(
+      expect.any(HTMLCanvasElement),
+      expect.objectContaining({
+        backgroundColor: 'rgba(0,0,0,0)',
+      }),
+    )
+
     await user.type(screen.getByLabelText(/Signature name/i), 'Test Sig')
     await user.click(screen.getByRole('button', { name: /Save Signature/i }))
 

@@ -97,10 +97,10 @@ export const SignatureAnnotationNode = ({
         <Rect
           width={rectPx.width}
           height={rectPx.height}
-          fill="#ffffff"
-          stroke={selected ? '#f97316' : '#11111122'}
-          strokeWidth={selected ? 2 : 1}
-          cornerRadius={4}
+          fill="rgba(0,0,0,0)"
+          stroke={selected ? '#f97316' : undefined}
+          strokeWidth={selected ? 2 : 0}
+          cornerRadius={selected ? 4 : 0}
         />
         {imageElement ? (
           <KonvaImage
