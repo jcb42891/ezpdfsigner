@@ -64,8 +64,8 @@ Verification:
 - [x] `P1-08` Implement zoom controls (`-`, `+`, reset).
 - [x] `P1-09` Keep page dimensions synchronized for annotation layer alignment.
 - [x] `P1-10` Add loading and error states for PDF parse/render failures.
-- [ ] `P1-11` Add unit tests for PDF document parsing helpers.
-- [ ] `P1-12` Add integration test: import PDF renders all pages.
+- [x] `P1-11` Add unit tests for PDF document parsing helpers.
+- [x] `P1-12` Add integration test: import PDF renders all pages.
 - [ ] `P1-13` Verify with single-page and multi-page PDFs.
 - [ ] `P1-14` Record milestone completion and evidence.
 
@@ -89,7 +89,7 @@ Verification:
 - [x] `P2-10` Implement delete selected annotation action + keyboard shortcut.
 - [x] `P2-11` Implement coordinate helper utilities (`pct` <-> px).
 - [x] `P2-12` Add unit tests for clamping and conversion utilities.
-- [ ] `P2-13` Add integration tests for text add/edit/move/resize/delete.
+- [x] `P2-13` Add integration tests for text add/edit/move/resize/delete.
 - [ ] `P2-14` Manual test with zoom changes for alignment stability.
 - [ ] `P2-15` Record milestone completion and evidence.
 
@@ -114,10 +114,10 @@ Verification:
 - [x] `P3-11` Implement keyboard copy for selected signature (`Ctrl+C`).
 - [x] `P3-12` Implement keyboard paste with offset (`Ctrl+V`).
 - [x] `P3-13` Clamp pasted annotation bounds.
-- [ ] `P3-14` Add unit tests for signature template persistence parser.
-- [ ] `P3-15` Add unit tests for copy/paste offset + clamping.
-- [ ] `P3-16` Add integration test for draw/save/place signature.
-- [ ] `P3-17` Add integration test for copy/paste signature.
+- [x] `P3-14` Add unit tests for signature template persistence parser.
+- [x] `P3-15` Add unit tests for copy/paste offset + clamping.
+- [x] `P3-16` Add integration test for draw/save/place signature.
+- [x] `P3-17` Add integration test for copy/paste signature.
 - [ ] `P3-18` Record milestone completion and evidence.
 
 Verification:
@@ -136,7 +136,7 @@ Verification:
 - [x] `P4-06` Implement export button state (`idle`, `working`, `error`).
 - [x] `P4-07` Implement output filename strategy (`<original>-signed.pdf`).
 - [x] `P4-08` Add unit tests for coordinate mapping (including y-axis inversion).
-- [ ] `P4-09` Add integration test ensuring export returns non-empty PDF bytes.
+- [x] `P4-09` Add integration test ensuring export returns non-empty PDF bytes.
 - [ ] `P4-10` Manual PDF validation with Adobe Reader/Chrome PDF viewer.
 - [ ] `P4-11` Record milestone completion and evidence.
 
@@ -185,14 +185,14 @@ Verification:
 | ------- | ----------- | ------------------------------------ | ------------------- | ------ |
 | T-01    | Unit        | Coordinate conversion UI <-> PDF     | P2-11, P4-01, P4-08 | [x]    |
 | T-02    | Unit        | Annotation clamping bounds           | P2-09, P2-12        | [x]    |
-| T-03    | Unit        | Signature template persistence parse | P3-05, P3-14        | [ ]    |
-| T-04    | Unit        | Clipboard copy/paste offset logic    | P3-11, P3-12, P3-15 | [ ]    |
-| T-05    | Integration | Import + render multi-page PDF       | P1-01..P1-12        | [ ]    |
-| T-06    | Integration | Add/edit/move/resize/delete text     | P2-03..P2-13        | [ ]    |
-| T-07    | Integration | Draw/save/place signature            | P3-01..P3-16        | [ ]    |
-| T-08    | Integration | Copy/paste signature instances       | P3-11..P3-17        | [ ]    |
-| T-09    | Integration | Export with mixed annotations        | P4-01..P4-10        | [ ]    |
-| T-10    | E2E         | Full v1 user flow                    | P5-07               | [ ]    |
+| T-03    | Unit        | Signature template persistence parse | P3-05, P3-14        | [x]    |
+| T-04    | Unit        | Clipboard copy/paste offset logic    | P3-11, P3-12, P3-15 | [x]    |
+| T-05    | Integration | Import + render multi-page PDF       | P1-01..P1-12        | [x]    |
+| T-06    | Integration | Add/edit/move/resize/delete text     | P2-03..P2-13        | [x]    |
+| T-07    | Integration | Draw/save/place signature            | P3-01..P3-16        | [x]    |
+| T-08    | Integration | Copy/paste signature instances       | P3-11..P3-17        | [x]    |
+| T-09    | Integration | Export with mixed annotations        | P4-01..P4-10        | [x]    |
+| T-10    | E2E         | Full v1 user flow                    | P5-07               | [x]    |
 
 ## 7. Execution Log
 
@@ -200,6 +200,10 @@ Verification:
 | ---------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | 2026-02-21 | Create planning artifacts                | N/A                                                                                                     | Added `SPEC.md`, `TECH_SPEC.md`, `WORK_LOG.md`                                                               | Docs created in repo root                                                                                |
 | 2026-02-21 | Bootstrap + implement first full V1 pass | P0-01..P0-12, P1-01..P1-10, P2-01..P2-12, P3-01..P3-13, P4-01..P4-08, P5-02, P5-03, P5-07, P5-10, P5-11 | Functional app scaffolding complete with PDF render, text/signature editing, export, tests, and docs refresh | `npm run lint` pass, `npm run test` pass, `npm run build` pass, `npm run test:e2e` pass (chromium smoke) |
+| 2026-02-21 | Close remaining core automated coverage  | P1-11, P3-14, P3-15, P4-09                                                                              | Added metadata parsing, signature template storage, clipboard offset/clamp, and export integration tests     | `npm run test` pass (17 tests), `npm run lint` pass, `npm run build` pass, `npm run test:e2e` pass       |
+| 2026-02-21 | Add interaction integration coverage     | P1-12, P2-13, P3-17                                                                                     | Added integration tests for viewer multi-page rendering and text/signature interaction flows                 | `npm run test` pass (21 tests), `npm run lint` pass, `npm run build` pass, `npm run test:e2e` pass       |
+| 2026-02-21 | Cover signature pad UI integration       | P3-16                                                                                                   | Added integration tests for signature pad modal save and empty-signature validation behavior                 | `npm run test` pass (23 tests), `npm run lint` pass, `npm run build` pass, `npm run test:e2e` pass       |
+| 2026-02-21 | Add full end-to-end v1 workflow test     | P5-07                                                                                                   | Added Playwright test for upload, text add, signature draw/place, copy/paste, and export download            | `npm run test:e2e` pass (2 tests), `npm run test` pass, `npm run lint` pass, `npm run build` pass        |
 
 ## 8. Decision Log
 
@@ -238,6 +242,5 @@ End of session:
 
 ## 11. Next Actions (Immediate)
 
-- [ ] Add remaining Phase 1/2/3/4 coverage tests (`P1-11`, `P2-13`, `P3-14`, `P3-15`, `P4-09`).
 - [ ] Run manual validation on real PDFs to close `V-P1`, `V-P2`, `V-P3`, `V-P4`.
-- [ ] Add export integration test with fixture PDF and finish acceptance checklist.
+- [ ] Finish acceptance checklist after manual validation and interaction integration tests.

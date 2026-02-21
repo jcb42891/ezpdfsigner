@@ -2,6 +2,10 @@ import { nanoid } from 'nanoid'
 import { create } from 'zustand'
 import { clampNumber, clampRectPct } from '@/features/annotations/coordinate'
 import type { EditorActions } from '@/state/actions'
+import {
+  persistSignatureTemplates,
+  readSignatureTemplates,
+} from '@/state/signatureTemplateStorage'
 import type {
   AnnotationMap,
   SignatureAnnotation,
@@ -11,7 +15,6 @@ import type {
   ToolMode,
 } from '@/state/types'
 
-const SIGNATURE_STORAGE_KEY = 'ezpdfsigner.signatureTemplates.v1'
 const DEFAULT_ZOOM = 1
 const MIN_ZOOM = 0.4
 const MAX_ZOOM = 3
@@ -38,57 +41,6 @@ type EditorState = {
 }
 
 export type EditorStore = EditorState & EditorActions
-
-const safeJsonParse = <T>(value: string): T | null => {
-  try {
-    return JSON.parse(value) as T
-  } catch {
-    return null
-  }
-}
-
-const sanitizeTemplate = (value: unknown): SignatureTemplate | null => {
-  if (!value || typeof value !== 'object') {
-    return null
-  }
-
-  const candidate = value as Record<string, unknown>
-  if (
-    typeof candidate.id !== 'string' ||
-    typeof candidate.name !== 'string' ||
-    typeof candidate.imageDataUrl !== 'string' ||
-    typeof candidate.createdAt !== 'string'
-  ) {
-    return null
-  }
-
-  return {
-    id: candidate.id,
-    name: candidate.name,
-    imageDataUrl: candidate.imageDataUrl,
-    createdAt: candidate.createdAt,
-  }
-}
-
-const readSignatureTemplates = (): SignatureTemplate[] => {
-  const rawValue = localStorage.getItem(SIGNATURE_STORAGE_KEY)
-  if (!rawValue) {
-    return []
-  }
-
-  const parsed = safeJsonParse<unknown>(rawValue)
-  if (!Array.isArray(parsed)) {
-    return []
-  }
-
-  return parsed
-    .map((entry) => sanitizeTemplate(entry))
-    .filter((entry): entry is SignatureTemplate => Boolean(entry))
-}
-
-const persistSignatureTemplates = (templates: SignatureTemplate[]): void => {
-  localStorage.setItem(SIGNATURE_STORAGE_KEY, JSON.stringify(templates))
-}
 
 const buildTemplateMaps = (templates: SignatureTemplate[]) => {
   const signatureTemplatesById: SignatureTemplateMap = {}
