@@ -12,7 +12,8 @@ type PdfDocumentState = {
 export const readPdfMetadata = async (
   bytes: Uint8Array,
 ): Promise<{ pageCount: number; pageSizes: PageSize[] }> => {
-  const loadingTask = getDocument({ data: bytes })
+  // pdf.js may transfer ArrayBuffers to workers; clone so source bytes remain usable.
+  const loadingTask = getDocument({ data: bytes.slice() })
   const pdfDocument = await loadingTask.promise
 
   try {
@@ -52,7 +53,8 @@ export const usePdfDocument = (bytes: Uint8Array | null): PdfDocumentState => {
 
     let canceled = false
     let activeDocument: PDFDocumentProxy | null = null
-    const loadingTask = getDocument({ data: bytes })
+    // Clone to avoid mutating the original bytes stored for export.
+    const loadingTask = getDocument({ data: bytes.slice() })
 
     setState({
       status: 'loading',

@@ -16,20 +16,20 @@ export const PdfViewer = () => {
     )
   }
 
-  if (status === 'loading' || !pdfDocument) {
-    return (
-      <section className="viewer-empty-state">
-        <h2>Loading PDF</h2>
-        <p>Preparing {sourcePdf.fileName}...</p>
-      </section>
-    )
-  }
-
   if (status === 'error') {
     return (
       <section className="viewer-empty-state">
         <h2>PDF failed to load</h2>
         <p>{error ?? 'Try re-uploading the file.'}</p>
+      </section>
+    )
+  }
+
+  if (status === 'loading' || !pdfDocument) {
+    return (
+      <section className="viewer-empty-state">
+        <h2>Loading PDF</h2>
+        <p>Preparing {sourcePdf.fileName}...</p>
       </section>
     )
   }
