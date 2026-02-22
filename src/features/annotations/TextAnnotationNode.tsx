@@ -96,16 +96,21 @@ export const TextAnnotationNode = ({
           onSelect()
           onRequestTextEdit()
         }}
+        onDblTap={(event) => {
+          event.cancelBubble = true
+          onSelect()
+          onRequestTextEdit()
+        }}
         onDragEnd={commitRectFromNode}
         onTransformEnd={commitRectFromNode}
       >
         <Rect
           width={rectPx.width}
           height={rectPx.height}
-          stroke={selected ? '#f97316' : '#11111155'}
-          strokeWidth={selected ? 2 : 1}
-          fill="white"
-          cornerRadius={4}
+          stroke={selected ? '#f97316' : undefined}
+          strokeWidth={selected ? 2 : 0}
+          fill="rgba(0,0,0,0)"
+          cornerRadius={selected ? 4 : 0}
         />
         <Text
           text={annotation.text}

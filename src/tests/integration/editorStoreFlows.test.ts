@@ -36,8 +36,10 @@ describe('editor store flows', () => {
 
   it('supports text annotation add/edit/move/delete lifecycle', () => {
     const store = useEditorStore.getState()
+    store.setToolMode('text')
     const textId = store.addTextAnnotation({ pageIndex: 0, xPct: 0.2, yPct: 0.2 })
     expect(textId).toBeTruthy()
+    expect(useEditorStore.getState().toolMode).toBe('text')
 
     const createdText = useEditorStore.getState().annotationsById[textId as string]
     expect(createdText?.type).toBe('text')

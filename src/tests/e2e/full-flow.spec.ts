@@ -1,14 +1,6 @@
 import { expect, test } from '@playwright/test'
 
 test('upload, add text/signature, copy-paste signature, and export', async ({ page }) => {
-  page.on('dialog', async (dialog) => {
-    if (dialog.message().includes('Edit text')) {
-      await dialog.accept('Approved')
-      return
-    }
-    await dialog.dismiss()
-  })
-
   await page.goto('/')
 
   await page.locator('input[type="file"]').setInputFiles('src/tests/fixtures/sample.pdf')
@@ -17,12 +9,16 @@ test('upload, add text/signature, copy-paste signature, and export', async ({ pa
   await expect(page.getByText('Page 2')).toBeVisible()
 
   await page.getByRole('button', { name: 'Text' }).click()
-  await page
-    .locator('.pdf-page-canvas-wrapper canvas')
-    .nth(1)
-    .click({ position: { x: 180, y: 120 } })
+  const pageTwoLayer = page.locator('.pdf-page-canvas-wrapper .konvajs-content').nth(1)
+  const pageTwoBounds = await pageTwoLayer.boundingBox()
+  if (!pageTwoBounds) {
+    throw new Error('Expected second page annotation layer bounds')
+  }
+
+  await pageTwoLayer.click({ position: { x: 180, y: 120 } })
 
   await expect(page.getByText('1 annotations')).toBeVisible()
+  await page.locator('.status-bar__editor input').first().fill('Approved')
   await expect(page.locator('.status-bar__editor input').first()).toHaveValue('Approved')
 
   await page.getByRole('button', { name: 'Draw Signature' }).click()
@@ -35,14 +31,14 @@ test('upload, add text/signature, copy-paste signature, and export', async ({ pa
   await page.getByRole('button', { name: 'Save Signature' }).click()
 
   await page
-    .locator('.pdf-page-canvas-wrapper canvas')
+    .locator('.pdf-page-canvas-wrapper .konvajs-content')
     .nth(1)
     .click({ position: { x: 220, y: 220 } })
 
   await expect(page.getByText('2 annotations')).toBeVisible()
 
   await page
-    .locator('.pdf-page-canvas-wrapper canvas')
+    .locator('.pdf-page-canvas-wrapper .konvajs-content')
     .nth(1)
     .click({ position: { x: 220, y: 220 } })
 

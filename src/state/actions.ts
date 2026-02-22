@@ -4,6 +4,9 @@ export type AddTextAnnotationInput = {
   pageIndex: number
   xPct: number
   yPct: number
+  widthPct?: number
+  heightPct?: number
+  text?: string
 }
 
 export type PlaceSignatureInput = {

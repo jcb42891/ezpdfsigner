@@ -20,6 +20,8 @@ const MIN_ZOOM = 0.4
 const MAX_ZOOM = 3
 const TEXT_DEFAULT_WIDTH_PCT = 0.22
 const TEXT_DEFAULT_HEIGHT_PCT = 0.06
+const TEXT_MIN_FONT_SIZE = 8
+const TEXT_MAX_FONT_SIZE = 96
 const SIGNATURE_DEFAULT_WIDTH_PCT = 0.25
 const SIGNATURE_DEFAULT_HEIGHT_PCT = 0.1
 const CLIPBOARD_OFFSET_PCT = 0.02
@@ -112,19 +114,27 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       toolMode: state.selectedSignatureTemplateId ? state.toolMode : 'select',
     })),
 
-  addTextAnnotation: ({ pageIndex, xPct, yPct }) => {
+  addTextAnnotation: ({ pageIndex, xPct, yPct, widthPct, heightPct, text }) => {
     const sourcePdf = get().sourcePdf
     if (!sourcePdf || pageIndex < 0 || pageIndex >= sourcePdf.pageCount) {
       return null
     }
 
     const id = nanoid()
-    const rect = clampRectPct({
-      xPct: xPct - TEXT_DEFAULT_WIDTH_PCT / 2,
-      yPct: yPct - TEXT_DEFAULT_HEIGHT_PCT / 2,
-      widthPct: TEXT_DEFAULT_WIDTH_PCT,
-      heightPct: TEXT_DEFAULT_HEIGHT_PCT,
-    })
+    const hasCustomRect = typeof widthPct === 'number' && typeof heightPct === 'number'
+    const rect = hasCustomRect
+      ? clampRectPct({
+          xPct,
+          yPct,
+          widthPct,
+          heightPct,
+        })
+      : clampRectPct({
+          xPct: xPct - TEXT_DEFAULT_WIDTH_PCT / 2,
+          yPct: yPct - TEXT_DEFAULT_HEIGHT_PCT / 2,
+          widthPct: TEXT_DEFAULT_WIDTH_PCT,
+          heightPct: TEXT_DEFAULT_HEIGHT_PCT,
+        })
 
     set((state) => ({
       annotationsById: {
@@ -134,14 +144,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
           type: 'text',
           pageIndex,
           ...rect,
-          text: 'New text',
+          text: typeof text === 'string' ? text : '',
           fontSize: 16,
           color: '#111111',
         },
       },
       annotationOrder: [...state.annotationOrder, id],
       selectedAnnotationId: id,
-      toolMode: 'select',
     }))
 
     return id
@@ -160,7 +169,10 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
           [id]: {
             ...annotation,
             text: typeof text === 'string' ? text : annotation.text,
-            fontSize: typeof fontSize === 'number' ? fontSize : annotation.fontSize,
+            fontSize:
+              typeof fontSize === 'number' && Number.isFinite(fontSize)
+                ? clampNumber(fontSize, TEXT_MIN_FONT_SIZE, TEXT_MAX_FONT_SIZE)
+                : annotation.fontSize,
             color: typeof color === 'string' ? color : annotation.color,
           },
         },

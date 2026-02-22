@@ -163,6 +163,49 @@ button.primary {
   border-radius: 6px;
 }
 
+.annotation-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.annotation-text-editor {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  z-index: 3;
+}
+
+.annotation-text-editor label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: flex-start;
+  font-size: 0.75rem;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.2rem 0.35rem;
+}
+
+.annotation-text-editor label input {
+  width: 60px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  padding: 0.1rem 0.25rem;
+}
+
+.annotation-text-editor textarea {
+  width: 100%;
+  border: 2px solid #f97316;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.97);
+  padding: 6px;
+  line-height: 1.2;
+  resize: none;
+}
+
 .pdf-page-error {
   margin: 0.5rem 0 0;
   color: #dc2626;
