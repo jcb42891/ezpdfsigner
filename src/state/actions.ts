@@ -34,6 +34,7 @@ export type UpdateTextInput = {
 export type EditorActions = {
   setToolMode: (toolMode: ToolMode) => void
   setZoom: (zoom: number) => void
+  setDefaultTextFontSize: (fontSize: number) => void
   setSelectedAnnotationId: (annotationId: string | null) => void
   setSelectedSignatureTemplateId: (templateId: string | null) => void
   openSignaturePad: () => void

@@ -99,6 +99,20 @@ button.primary {
   background: var(--color-surface-2);
 }
 
+.toolbar__field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+}
+
+.toolbar__field input {
+  width: 74px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  padding: 0.35rem 0.45rem;
+}
+
 .app-shell__body {
   display: grid;
   grid-template-columns: 300px 1fr;

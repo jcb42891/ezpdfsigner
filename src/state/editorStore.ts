@@ -20,8 +20,9 @@ const MIN_ZOOM = 0.4
 const MAX_ZOOM = 3
 const TEXT_DEFAULT_WIDTH_PCT = 0.22
 const TEXT_DEFAULT_HEIGHT_PCT = 0.06
-const TEXT_MIN_FONT_SIZE = 8
-const TEXT_MAX_FONT_SIZE = 96
+export const TEXT_DEFAULT_FONT_SIZE = 16
+export const TEXT_MIN_FONT_SIZE = 8
+export const TEXT_MAX_FONT_SIZE = 96
 const SIGNATURE_DEFAULT_WIDTH_PCT = 0.25
 const SIGNATURE_DEFAULT_HEIGHT_PCT = 0.1
 const CLIPBOARD_OFFSET_PCT = 0.02
@@ -30,6 +31,7 @@ type EditorState = {
   sourcePdf: SourcePdf | null
   toolMode: ToolMode
   zoom: number
+  defaultTextFontSize: number
   selectedAnnotationId: string | null
   selectedSignatureTemplateId: string | null
   annotationsById: AnnotationMap
@@ -69,6 +71,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   sourcePdf: null,
   toolMode: 'select',
   zoom: DEFAULT_ZOOM,
+  defaultTextFontSize: TEXT_DEFAULT_FONT_SIZE,
   selectedAnnotationId: null,
   selectedSignatureTemplateId: initialTemplates.signatureTemplateOrder[0] ?? null,
   annotationsById: {},
@@ -85,6 +88,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setZoom: (zoom) =>
     set({
       zoom: clampNumber(zoom, MIN_ZOOM, MAX_ZOOM),
+    }),
+
+  setDefaultTextFontSize: (fontSize) =>
+    set({
+      defaultTextFontSize: clampNumber(fontSize, TEXT_MIN_FONT_SIZE, TEXT_MAX_FONT_SIZE),
     }),
 
   setSelectedAnnotationId: (selectedAnnotationId) => set({ selectedAnnotationId }),
@@ -145,7 +153,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
           pageIndex,
           ...rect,
           text: typeof text === 'string' ? text : '',
-          fontSize: 16,
+          fontSize: state.defaultTextFontSize,
           color: '#111111',
         },
       },

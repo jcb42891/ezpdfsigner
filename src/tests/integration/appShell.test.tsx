@@ -7,5 +7,6 @@ describe('app shell', () => {
 
     expect(screen.getByText(/Open a PDF to start editing/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Upload PDF/i })).toBeInTheDocument()
+    expect(screen.getByLabelText(/Default text size/i)).toBeInTheDocument()
   })
 })

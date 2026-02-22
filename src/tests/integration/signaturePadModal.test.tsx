@@ -45,6 +45,7 @@ const resetEditorStore = (): void => {
     sourcePdf: null,
     toolMode: 'select',
     zoom: 1,
+    defaultTextFontSize: 16,
     selectedAnnotationId: null,
     selectedSignatureTemplateId: null,
     annotationsById: {},

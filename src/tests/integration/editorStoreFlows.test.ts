@@ -8,6 +8,7 @@ const resetEditorStore = (): void => {
     sourcePdf: null,
     toolMode: 'select',
     zoom: 1,
+    defaultTextFontSize: 16,
     selectedAnnotationId: null,
     selectedSignatureTemplateId: null,
     annotationsById: {},
@@ -72,6 +73,32 @@ describe('editor store flows', () => {
 
     useEditorStore.getState().deleteAnnotation(textId as string)
     expect(useEditorStore.getState().annotationsById[textId as string]).toBeUndefined()
+  })
+
+  it('applies default text size to new annotations only', () => {
+    const store = useEditorStore.getState()
+    store.setDefaultTextFontSize(20)
+
+    const firstTextId = store.addTextAnnotation({ pageIndex: 0, xPct: 0.2, yPct: 0.2 })
+    expect(firstTextId).toBeTruthy()
+
+    store.updateTextAnnotation({
+      id: firstTextId as string,
+      fontSize: 28,
+    })
+
+    store.setDefaultTextFontSize(14)
+    const secondTextId = store.addTextAnnotation({ pageIndex: 0, xPct: 0.4, yPct: 0.4 })
+    expect(secondTextId).toBeTruthy()
+
+    const firstText = useEditorStore.getState().annotationsById[firstTextId as string]
+    const secondText = useEditorStore.getState().annotationsById[secondTextId as string]
+    if (!firstText || !secondText || firstText.type !== 'text' || secondText.type !== 'text') {
+      throw new Error('Expected text annotations')
+    }
+
+    expect(firstText.fontSize).toBe(28)
+    expect(secondText.fontSize).toBe(14)
   })
 
   it('supports signature template create/place/copy/paste lifecycle', () => {

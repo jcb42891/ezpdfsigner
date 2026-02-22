@@ -1,5 +1,9 @@
 import { useRef } from 'react'
-import { useEditorStore } from '@/state/editorStore'
+import {
+  TEXT_MAX_FONT_SIZE,
+  TEXT_MIN_FONT_SIZE,
+  useEditorStore,
+} from '@/state/editorStore'
 
 type Props = {
   onFileSelected: (file: File) => void
@@ -11,8 +15,12 @@ export const Toolbar = ({ onFileSelected, onExport, exportStatus }: Props) => {
   const sourcePdf = useEditorStore((state) => state.sourcePdf)
   const toolMode = useEditorStore((state) => state.toolMode)
   const zoom = useEditorStore((state) => state.zoom)
+  const defaultTextFontSize = useEditorStore((state) => state.defaultTextFontSize)
   const setToolMode = useEditorStore((state) => state.setToolMode)
   const setZoom = useEditorStore((state) => state.setZoom)
+  const setDefaultTextFontSize = useEditorStore(
+    (state) => state.setDefaultTextFontSize,
+  )
   const openSignaturePad = useEditorStore((state) => state.openSignaturePad)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -77,6 +85,22 @@ export const Toolbar = ({ onFileSelected, onExport, exportStatus }: Props) => {
           +
         </button>
       </div>
+      <label className="toolbar__field">
+        Default text size
+        <input
+          type="number"
+          min={TEXT_MIN_FONT_SIZE}
+          max={TEXT_MAX_FONT_SIZE}
+          value={defaultTextFontSize}
+          onChange={(event) => {
+            const nextFontSize = event.currentTarget.valueAsNumber
+            if (!Number.isFinite(nextFontSize)) {
+              return
+            }
+            setDefaultTextFontSize(nextFontSize)
+          }}
+        />
+      </label>
       <button type="button" onClick={openSignaturePad} disabled={!sourcePdf}>
         Draw Signature
       </button>
