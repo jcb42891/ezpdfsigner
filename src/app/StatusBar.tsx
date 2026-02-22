@@ -21,7 +21,7 @@ export const StatusBar = () => {
       <div className="status-bar__meta">
         <span>{sourcePdf ? sourcePdf.fileName : 'No PDF loaded'}</span>
         <span>{annotationOrder.length} annotations</span>
-        <span>Shortcuts: Ctrl+C, Ctrl+V, Delete</span>
+        <span>Shortcuts: V Select, T Text, S Signature, Ctrl+C, Ctrl+V, Delete</span>
       </div>
       {selectedAnnotation && selectedAnnotation.type === 'text' ? (
         <div className="status-bar__editor">

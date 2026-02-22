@@ -9,7 +9,7 @@ import { readPdfMetadata } from '@/features/pdf/usePdfDocument'
 import { SignaturePadModal } from '@/features/signature/SignaturePadModal'
 import { SignaturePanel } from '@/features/signature/SignaturePanel'
 import { useEditorStore } from '@/state/editorStore'
-import type { Annotation } from '@/state/types'
+import type { Annotation, ToolMode } from '@/state/types'
 import { triggerFileDownload } from '@/utils/download'
 
 export const App = () => {
@@ -28,6 +28,7 @@ export const App = () => {
     (state) => state.pasteSignatureAnnotation,
   )
   const setSelectedAnnotationId = useEditorStore((state) => state.setSelectedAnnotationId)
+  const setToolMode = useEditorStore((state) => state.setToolMode)
   const closeSignaturePad = useEditorStore((state) => state.closeSignaturePad)
 
   const annotations = useMemo(
@@ -100,6 +101,13 @@ export const App = () => {
           setSelectedAnnotationId(null)
           closeSignaturePad()
         },
+        onSetToolMode: (toolMode: ToolMode) => {
+          if (!sourcePdf) {
+            return
+          }
+
+          setToolMode(toolMode)
+        },
       })
     }
 
@@ -112,8 +120,10 @@ export const App = () => {
     copySignatureAnnotation,
     deleteAnnotation,
     pasteSignatureAnnotation,
+    setToolMode,
     selectedAnnotationId,
     setSelectedAnnotationId,
+    sourcePdf,
   ])
 
   return (

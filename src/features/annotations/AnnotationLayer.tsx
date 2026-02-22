@@ -22,6 +22,11 @@ type Props = {
 
 const TEXT_DRAG_THRESHOLD_PCT = 0.015
 const TEXT_EDITOR_MIN_HEIGHT_PX = 36
+const TOOL_CURSOR_BY_MODE = {
+  select: 'grab',
+  text: 'text',
+  signature: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23111827' d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 2.83H5v-.92l9.06-9.06.92.92L5.92 20.08zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E") 2 22, crosshair`,
+} as const
 
 type PointPct = {
   xPct: number
@@ -69,6 +74,7 @@ export const AnnotationLayer = ({
   const placeSignature = useEditorStore((state) => state.placeSignature)
   const setSelectedAnnotationId = useEditorStore((state) => state.setSelectedAnnotationId)
   const upsertAnnotationRect = useEditorStore((state) => state.upsertAnnotationRect)
+  const stageCursor = TOOL_CURSOR_BY_MODE[toolMode]
 
   const pageAnnotations = useMemo(
     () =>
@@ -280,7 +286,7 @@ export const AnnotationLayer = ({
         style={{
           position: 'absolute',
           inset: 0,
-          cursor: toolMode === 'text' ? 'crosshair' : 'default',
+          cursor: stageCursor,
         }}
       >
         <Layer>

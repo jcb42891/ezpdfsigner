@@ -1,10 +1,12 @@
 import { isEditableElement } from '@/utils/guards'
+import type { ToolMode } from '@/state/types'
 
 type ShortcutHandlers = {
   onCopySignature: () => void
   onPasteSignature: () => void
   onDeleteSelection: () => void
   onEscape: () => void
+  onSetToolMode: (toolMode: ToolMode) => void
 }
 
 export const handleEditorShortcuts = (
@@ -38,6 +40,21 @@ export const handleEditorShortcuts = (
 
     if (lowerKey === 'v') {
       handlers.onPasteSignature()
+      event.preventDefault()
+      return true
+    }
+  }
+
+  if (!event.ctrlKey && !event.metaKey && !event.altKey) {
+    const lowerKey = event.key.toLowerCase()
+    const toolModeByHotkey: Record<string, ToolMode> = {
+      v: 'select',
+      t: 'text',
+      s: 'signature',
+    }
+    const nextToolMode = toolModeByHotkey[lowerKey]
+    if (nextToolMode) {
+      handlers.onSetToolMode(nextToolMode)
       event.preventDefault()
       return true
     }
