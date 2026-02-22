@@ -2,8 +2,8 @@ import { isEditableElement } from '@/utils/guards'
 import type { ToolMode } from '@/state/types'
 
 type ShortcutHandlers = {
-  onCopySignature: () => void
-  onPasteSignature: () => void
+  onCopySignature: () => boolean
+  onPasteSignature: () => boolean
   onDeleteSelection: () => void
   onEscape: () => void
   onSetToolMode: (toolMode: ToolMode) => void
@@ -33,15 +33,23 @@ export const handleEditorShortcuts = (
     const lowerKey = event.key.toLowerCase()
 
     if (lowerKey === 'c') {
-      handlers.onCopySignature()
-      event.preventDefault()
-      return true
+      const handled = handlers.onCopySignature()
+      if (handled) {
+        event.preventDefault()
+        return true
+      }
+
+      return false
     }
 
     if (lowerKey === 'v') {
-      handlers.onPasteSignature()
-      event.preventDefault()
-      return true
+      const handled = handlers.onPasteSignature()
+      if (handled) {
+        event.preventDefault()
+        return true
+      }
+
+      return false
     }
   }
 

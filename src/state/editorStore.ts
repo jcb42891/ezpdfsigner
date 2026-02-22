@@ -7,8 +7,8 @@ import {
   readSignatureTemplates,
 } from '@/state/signatureTemplateStorage'
 import type {
+  Annotation,
   AnnotationMap,
-  SignatureAnnotation,
   SignatureTemplate,
   SignatureTemplateMap,
   SourcePdf,
@@ -37,7 +37,7 @@ type EditorState = {
   signatureTemplatesById: SignatureTemplateMap
   signatureTemplateOrder: string[]
   clipboard: {
-    annotationSnapshot: SignatureAnnotation | null
+    annotationSnapshot: Annotation | null
   }
   isSignaturePadOpen: boolean
 }
@@ -258,29 +258,38 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       }
     }),
 
-  copySignatureAnnotation: () =>
-    set((state) => {
-      if (!state.selectedAnnotationId) {
-        return state
-      }
+  copySignatureAnnotation: () => {
+    const state = get()
+    if (!state.selectedAnnotationId) {
+      return false
+    }
 
-      const annotation = state.annotationsById[state.selectedAnnotationId]
-      if (!annotation || annotation.type !== 'signature') {
-        return state
-      }
+    const annotation = state.annotationsById[state.selectedAnnotationId]
+    if (!annotation) {
+      return false
+    }
 
-      return {
-        clipboard: {
-          annotationSnapshot: annotation,
-        },
-      }
-    }),
+    set({
+      clipboard: {
+        annotationSnapshot: annotation,
+      },
+    })
+
+    return true
+  },
 
   pasteSignatureAnnotation: () => {
     const state = get()
     const snapshot = state.clipboard.annotationSnapshot
 
-    if (!snapshot || !state.signatureTemplatesById[snapshot.templateId]) {
+    if (!snapshot) {
+      return null
+    }
+
+    if (
+      snapshot.type === 'signature' &&
+      !state.signatureTemplatesById[snapshot.templateId]
+    ) {
       return null
     }
 

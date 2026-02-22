@@ -2,8 +2,8 @@ import { handleEditorShortcuts } from '@/features/clipboard/clipboardHandlers'
 import type { ToolMode } from '@/state/types'
 
 const createHandlers = () => ({
-  onCopySignature: vi.fn(),
-  onPasteSignature: vi.fn(),
+  onCopySignature: vi.fn<() => boolean>(() => true),
+  onPasteSignature: vi.fn<() => boolean>(() => true),
   onDeleteSelection: vi.fn(),
   onEscape: vi.fn(),
   onSetToolMode: vi.fn<(toolMode: ToolMode) => void>(),
@@ -53,6 +53,22 @@ describe('handleEditorShortcuts', () => {
     expect(handlers.onPasteSignature).toHaveBeenCalledTimes(1)
 
     expect(handlers.onSetToolMode).not.toHaveBeenCalled()
+  })
+
+  it('does not block native clipboard shortcuts when no annotation action applies', () => {
+    const handlers = createHandlers()
+    handlers.onCopySignature.mockReturnValue(false)
+    handlers.onPasteSignature.mockReturnValue(false)
+
+    const copyEvent = createKeyboardEvent('c', { ctrlKey: true })
+    const copyHandled = handleEditorShortcuts(copyEvent, handlers)
+    expect(copyHandled).toBe(false)
+    expect(copyEvent.defaultPrevented).toBe(false)
+
+    const pasteEvent = createKeyboardEvent('v', { ctrlKey: true })
+    const pasteHandled = handleEditorShortcuts(pasteEvent, handlers)
+    expect(pasteHandled).toBe(false)
+    expect(pasteEvent.defaultPrevented).toBe(false)
   })
 
   it('ignores shortcuts while typing in editable elements', () => {

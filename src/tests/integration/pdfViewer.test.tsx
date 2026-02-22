@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { createEvent, fireEvent, render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import { PdfViewer } from '@/features/pdf/PdfViewer'
 import { useEditorStore } from '@/state/editorStore'
@@ -30,6 +30,24 @@ const resetEditorStore = (): void => {
     signatureTemplateOrder: [],
     clipboard: { annotationSnapshot: null },
     isSignaturePadOpen: false,
+  })
+}
+
+const setLoadedSourcePdf = (zoom = 1): void => {
+  useEditorStore.setState({
+    sourcePdf: {
+      fileName: 'sample.pdf',
+      bytes: new Uint8Array([1, 2, 3]),
+      pageCount: 1,
+      pageSizes: [{ width: 600, height: 800 }],
+    },
+    zoom,
+  })
+
+  usePdfDocumentMock.mockReturnValue({
+    status: 'ready',
+    pdfDocument: { mock: true },
+    error: null,
   })
 }
 
@@ -84,5 +102,64 @@ describe('PdfViewer', () => {
 
     expect(screen.getByText(/PDF failed to load/i)).toBeInTheDocument()
     expect(screen.getByText(/Invalid PDF file\./i)).toBeInTheDocument()
+  })
+
+  it('zooms in on ctrl + wheel up', () => {
+    setLoadedSourcePdf(1)
+    const { container } = render(<PdfViewer />)
+    const viewer = container.querySelector('.pdf-viewer')
+    if (!viewer) {
+      throw new Error('Expected pdf viewer element')
+    }
+
+    const wheelEvent = createEvent.wheel(viewer, {
+      deltaY: -120,
+      ctrlKey: true,
+      cancelable: true,
+    })
+
+    fireEvent(viewer, wheelEvent)
+
+    expect(wheelEvent.defaultPrevented).toBe(true)
+    expect(useEditorStore.getState().zoom).toBeCloseTo(1.1)
+  })
+
+  it('zooms out on ctrl + wheel down', () => {
+    setLoadedSourcePdf(1.2)
+    const { container } = render(<PdfViewer />)
+    const viewer = container.querySelector('.pdf-viewer')
+    if (!viewer) {
+      throw new Error('Expected pdf viewer element')
+    }
+
+    const wheelEvent = createEvent.wheel(viewer, {
+      deltaY: 120,
+      ctrlKey: true,
+      cancelable: true,
+    })
+
+    fireEvent(viewer, wheelEvent)
+
+    expect(wheelEvent.defaultPrevented).toBe(true)
+    expect(useEditorStore.getState().zoom).toBeCloseTo(1.1)
+  })
+
+  it('does not intercept wheel events without ctrl/meta', () => {
+    setLoadedSourcePdf(1)
+    const { container } = render(<PdfViewer />)
+    const viewer = container.querySelector('.pdf-viewer')
+    if (!viewer) {
+      throw new Error('Expected pdf viewer element')
+    }
+
+    const wheelEvent = createEvent.wheel(viewer, {
+      deltaY: -120,
+      cancelable: true,
+    })
+
+    fireEvent(viewer, wheelEvent)
+
+    expect(wheelEvent.defaultPrevented).toBe(false)
+    expect(useEditorStore.getState().zoom).toBe(1)
   })
 })

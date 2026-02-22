@@ -86,10 +86,10 @@ export const App = () => {
     const onKeyDown = (event: KeyboardEvent) => {
       handleEditorShortcuts(event, {
         onCopySignature: () => {
-          copySignatureAnnotation()
+          return copySignatureAnnotation()
         },
         onPasteSignature: () => {
-          pasteSignatureAnnotation()
+          return pasteSignatureAnnotation() !== null
         },
         onDeleteSelection: () => {
           if (!selectedAnnotationId) {
