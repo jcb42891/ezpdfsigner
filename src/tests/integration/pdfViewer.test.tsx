@@ -23,6 +23,7 @@ const resetEditorStore = (): void => {
     toolMode: 'select',
     zoom: 1,
     defaultTextFontSize: 16,
+    hasRecoveredDraftNotice: false,
     selectedAnnotationId: null,
     selectedSignatureTemplateId: null,
     annotationsById: {},

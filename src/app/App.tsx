@@ -17,15 +17,22 @@ export const App = () => {
   const [exportStatus, setExportStatus] = useState<'idle' | 'working' | 'error'>('idle')
 
   const sourcePdf = useEditorStore((state) => state.sourcePdf)
+  const hasRecoveredDraftNotice = useEditorStore(
+    (state) => state.hasRecoveredDraftNotice,
+  )
   const annotationOrder = useEditorStore((state) => state.annotationOrder)
   const annotationsById = useEditorStore((state) => state.annotationsById)
   const signatureTemplatesById = useEditorStore((state) => state.signatureTemplatesById)
   const selectedAnnotationId = useEditorStore((state) => state.selectedAnnotationId)
   const loadPdf = useEditorStore((state) => state.loadPdf)
+  const discardRecoveredDraft = useEditorStore((state) => state.discardRecoveredDraft)
   const deleteAnnotation = useEditorStore((state) => state.deleteAnnotation)
   const copySignatureAnnotation = useEditorStore((state) => state.copySignatureAnnotation)
   const pasteSignatureAnnotation = useEditorStore(
     (state) => state.pasteSignatureAnnotation,
+  )
+  const setRecoveredDraftNoticeVisible = useEditorStore(
+    (state) => state.setRecoveredDraftNoticeVisible,
   )
   const setSelectedAnnotationId = useEditorStore((state) => state.setSelectedAnnotationId)
   const setToolMode = useEditorStore((state) => state.setToolMode)
@@ -157,6 +164,31 @@ export const App = () => {
             void loadFile(file)
           }}
         >
+          {hasRecoveredDraftNotice ? (
+            <div className="banner-info" role="status" aria-live="polite">
+              <span>Recovered your last draft from this browser.</span>
+              <div className="banner-info__actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRecoveredDraftNoticeVisible(false)
+                  }}
+                >
+                  Keep draft
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoadError(null)
+                    setExportStatus('idle')
+                    discardRecoveredDraft()
+                  }}
+                >
+                  Discard draft
+                </button>
+              </div>
+            </div>
+          ) : null}
           {loadError ? <p className="banner-error">{loadError}</p> : null}
           {exportStatus === 'error' ? (
             <p className="banner-error">Export failed. Please try again.</p>

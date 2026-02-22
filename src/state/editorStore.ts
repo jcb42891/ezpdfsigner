@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid'
 import { create } from 'zustand'
 import { clampNumber, clampRectPct } from '@/features/annotations/coordinate'
 import type { EditorActions } from '@/state/actions'
+import { clearEditorDraft } from '@/state/editorDraftStorage'
 import {
   persistSignatureTemplates,
   readSignatureTemplates,
@@ -32,6 +33,7 @@ type EditorState = {
   toolMode: ToolMode
   zoom: number
   defaultTextFontSize: number
+  hasRecoveredDraftNotice: boolean
   selectedAnnotationId: string | null
   selectedSignatureTemplateId: string | null
   annotationsById: AnnotationMap
@@ -72,6 +74,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   toolMode: 'select',
   zoom: DEFAULT_ZOOM,
   defaultTextFontSize: TEXT_DEFAULT_FONT_SIZE,
+  hasRecoveredDraftNotice: false,
   selectedAnnotationId: null,
   selectedSignatureTemplateId: initialTemplates.signatureTemplateOrder[0] ?? null,
   annotationsById: {},
@@ -100,6 +103,34 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setSelectedSignatureTemplateId: (selectedSignatureTemplateId) =>
     set({ selectedSignatureTemplateId }),
 
+  setRecoveredDraftNoticeVisible: (isVisible) =>
+    set({ hasRecoveredDraftNotice: isVisible }),
+
+  discardRecoveredDraft: () => {
+    const state = get()
+    const selectedSignatureTemplateId =
+      state.signatureTemplateOrder.find((id) => Boolean(state.signatureTemplatesById[id])) ??
+      null
+
+    void clearEditorDraft()
+
+    set({
+      sourcePdf: null,
+      toolMode: 'select',
+      zoom: DEFAULT_ZOOM,
+      defaultTextFontSize: TEXT_DEFAULT_FONT_SIZE,
+      hasRecoveredDraftNotice: false,
+      selectedAnnotationId: null,
+      selectedSignatureTemplateId,
+      annotationsById: {},
+      annotationOrder: [],
+      clipboard: {
+        annotationSnapshot: null,
+      },
+      isSignaturePadOpen: false,
+    })
+  },
+
   openSignaturePad: () => set({ isSignaturePadOpen: true }),
 
   closeSignaturePad: () => set({ isSignaturePadOpen: false }),
@@ -119,6 +150,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       clipboard: {
         annotationSnapshot: null,
       },
+      hasRecoveredDraftNotice: false,
       toolMode: state.selectedSignatureTemplateId ? state.toolMode : 'select',
     })),
 

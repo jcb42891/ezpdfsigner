@@ -37,6 +37,8 @@ export type EditorActions = {
   setDefaultTextFontSize: (fontSize: number) => void
   setSelectedAnnotationId: (annotationId: string | null) => void
   setSelectedSignatureTemplateId: (templateId: string | null) => void
+  setRecoveredDraftNoticeVisible: (isVisible: boolean) => void
+  discardRecoveredDraft: () => void
   openSignaturePad: () => void
   closeSignaturePad: () => void
   loadPdf: (params: {
