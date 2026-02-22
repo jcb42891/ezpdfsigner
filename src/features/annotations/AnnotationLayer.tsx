@@ -144,6 +144,13 @@ export const AnnotationLayer = ({
     return pointerToPct(pointer.x, pointer.y, pageWidthPx, pageHeightPx)
   }
 
+  const closeTextEditor = (): void => {
+    textDragStartRef.current = null
+    setDraftTextRect(null)
+    setEditingTextId(null)
+    textEditorRef.current?.blur()
+  }
+
   const finishTextDrag = (
     event: Konva.KonvaEventObject<MouseEvent | TouchEvent>,
   ): void => {
@@ -214,6 +221,12 @@ export const AnnotationLayer = ({
       return
     }
 
+    if (toolMode === 'text' && editingTextId) {
+      setSelectedAnnotationId(editingTextId)
+      closeTextEditor()
+      return
+    }
+
     const point = getPointerPct(event)
     if (!point) {
       return
@@ -235,7 +248,7 @@ export const AnnotationLayer = ({
     }
 
     if (toolMode === 'signature') {
-      setEditingTextId(null)
+      closeTextEditor()
       placeSignature({
         pageIndex,
         ...point,
@@ -243,7 +256,7 @@ export const AnnotationLayer = ({
       return
     }
 
-    setEditingTextId(null)
+    closeTextEditor()
     setSelectedAnnotationId(null)
   }
 
@@ -382,21 +395,32 @@ export const AnnotationLayer = ({
             event.stopPropagation()
           }}
         >
-          <label>
-            Size
-            <input
-              type="number"
-              min={8}
-              max={96}
-              value={editingTextAnnotation.fontSize}
-              onChange={(event) => {
-                updateTextAnnotation({
-                  id: editingTextAnnotation.id,
-                  fontSize: Number(event.target.value),
-                })
+          <div className="annotation-text-editor__controls">
+            <label>
+              Size
+              <input
+                type="number"
+                min={8}
+                max={96}
+                value={editingTextAnnotation.fontSize}
+                onChange={(event) => {
+                  updateTextAnnotation({
+                    id: editingTextAnnotation.id,
+                    fontSize: Number(event.target.value),
+                  })
+                }}
+              />
+            </label>
+            <button
+              type="button"
+              className="annotation-text-editor__done"
+              onClick={() => {
+                closeTextEditor()
               }}
-            />
-          </label>
+            >
+              Done
+            </button>
+          </div>
           <textarea
             ref={textEditorRef}
             value={editingTextAnnotation.text}
@@ -412,12 +436,21 @@ export const AnnotationLayer = ({
               })
             }}
             onKeyDown={(event) => {
-              if (event.key !== 'Escape') {
+              const isSubmitShortcut =
+                event.key === 'Enter' &&
+                !event.shiftKey &&
+                !event.nativeEvent.isComposing
+              const isCancelShortcut = event.key === 'Escape'
+
+              if (!isSubmitShortcut && !isCancelShortcut) {
                 return
               }
 
-              setEditingTextId(null)
-              event.currentTarget.blur()
+              if (isSubmitShortcut) {
+                event.preventDefault()
+              }
+
+              closeTextEditor()
               event.stopPropagation()
             }}
           />

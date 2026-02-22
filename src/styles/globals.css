@@ -190,6 +190,13 @@ button.primary {
   z-index: 3;
 }
 
+.annotation-text-editor__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .annotation-text-editor label {
   display: inline-flex;
   align-items: center;
@@ -218,6 +225,13 @@ button.primary {
   padding: 6px;
   line-height: 1.2;
   resize: none;
+}
+
+.annotation-text-editor__done {
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.75rem;
+  line-height: 1.1;
 }
 
 .pdf-page-error {
